@@ -1,0 +1,12 @@
+{
+    \"Name\" : \"TabSwitch\",
+    \"Version\" : \"3.4.1\",
+    \"CompatVersion\" : \"3.4.1\",
+    \"Vendor\" : \"Dee\",
+    \"Copyright\" : \"(C) 2015 Dee\",
+    \"License\" : \"\",
+    \"Description\" : \"GUI extension with tabs for open editor files.\",
+    \"Url\" : \"http://github.com/dee/TabSwitchPlugin\",
+    $$dependencyList
+}
+
