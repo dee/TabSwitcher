@@ -118,11 +118,12 @@ void TabSwitchPlugin::modeChanged(Core::IMode* mode)
 
 			m_initialised = true;
 		}
-		//m_tab->show();
+		m_tab->show();
 	}
 	else
 	{
-		//m_tab->hide();
+		m_tab->setParent(0);
+		m_tab->hide();
 		qDebug() << "Edit mode inactive.\r\n";
 	}
 }
@@ -139,6 +140,8 @@ ExtensionSystem::IPlugin::ShutdownFlag TabSwitchPlugin::aboutToShutdown()
 */
 	//m_placeHolderLayout->removeWidget(0);
 	// Hide UI (if you add UI that is not in the main window directly)
+	m_tab->setParent(0);
+	m_tab->hide();
 	return SynchronousShutdown;
 }
 
