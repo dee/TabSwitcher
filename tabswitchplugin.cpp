@@ -112,8 +112,8 @@ void TabSwitchPlugin::extensionsInitialized()
 
 	//tab widget signals
 	//TODO: enable
-	connect(m_tab, SIGNAL(currentChanged(int)), this, SLOT(currentChanged(int)));
-	connect(m_tab, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(customContextMenu(const QPoint &)));
+//	connect(m_tab, SIGNAL(currentChanged(int)), this, SLOT(currentChanged(int)));
+//	connect(m_tab, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(customContextMenu(const QPoint &)));
 }
 
 void TabSwitchPlugin::modeChanged(Core::IMode* mode)
