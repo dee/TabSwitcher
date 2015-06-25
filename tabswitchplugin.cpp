@@ -15,6 +15,8 @@
 #include <coreplugin/modemanager.h>
 #include <coreplugin/editmode.h>
 #include <coreplugin/minisplitter.h>
+#include <coreplugin/editormanager/ieditor.h>
+#include <coreplugin/idocument.h>
 
 #include <QAction>
 #include <QMessageBox>
@@ -22,17 +24,47 @@
 #include <QMenu>
 
 #include <QtPlugin>
+#include <QFileInfo>
 
 using namespace TabSwitch::Internal;
 using namespace TabSwitch;
-using Core::EditorManagerPlaceHolder;
-using Core::ActionManager;
+using namespace Core;
+//using Core::EditorManagerPlaceHolder;
+//using Core::ActionManager;
 
 TabSwitchPlugin::TabSwitchPlugin()
 	: m_initialised(false)
 {
 	// Create your members
 	qDebug() << "Creating TabSwitch plugin.";
+/*
+	// create popup
+	m_popup = new QMenu(m_tab);
+
+	// get first from manager, it is predefined
+	Command *cmd = am->command(Constants::CLOSE);
+
+	if (cmd != 0)
+	{
+		m_popup->addAction(cmd->action());
+	}
+
+	// register own action
+	m_closeOthers = new QAction(tr("Close &Others"), this);
+	Context pContext(Constants::C_GLOBAL);
+	am->registerAction(m_closeOthers, Id("TabBar.CloseOtherEditors"), pContext);
+
+	connect(m_closeOthers, SIGNAL(triggered()),	this, SLOT(closeOthers()));
+	m_popup->addAction(m_closeOthers);
+
+	// get third from manager also
+	cmd = am->command(Constants::CLOSEALL);
+
+	if (cmd != 0)
+	{
+		m_popup->addAction(cmd->action());
+	}
+*/
 }
 
 TabSwitchPlugin::~TabSwitchPlugin()
@@ -54,9 +86,6 @@ bool TabSwitchPlugin::initialize(const QStringList &arguments, QString *errorStr
 	Q_UNUSED(arguments)
 	Q_UNUSED(errorString)
 
-//	auto pm = ExtensionSystem::PluginManager::instance();
-//	m_core = pm->getObject<Core::ICore>();
-//	m_wnd = new TabWindow(m_core);
 	return true;
 }
 
@@ -68,23 +97,23 @@ void TabSwitchPlugin::extensionsInitialized()
 	connect(Core::ModeManager::instance(), SIGNAL(currentModeChanged(Core::IMode *)),
 			this,
 			SLOT(modeChanged(Core::IMode *)));
-/*
 	connect(Core::ModeManager::instance(), SIGNAL(currentModeChanged(Core::IMode *)),
-			m_wnd,
+			this,
 			SLOT(modeChanged(Core::IMode *)));
-	connect(Core::EditorManager::instance(),
-			SIGNAL(editorCreated(Core::IEditor *, const QString &)),
-			m_wnd,
+	connect(Core::EditorManager::instance(), SIGNAL(editorCreated(Core::IEditor *, const QString &)),
+			this,
 			SLOT(editorCreated(Core::IEditor *, const QString &)));
-	connect(Core::EditorManager::instance(),
-			SIGNAL(currentEditorChanged(Core::IEditor *)),
-			m_wnd,
+	connect(Core::EditorManager::instance(), SIGNAL(currentEditorChanged(Core::IEditor *)),
+			this,
 			SLOT(currentEditorChanged(Core::IEditor *)));
-	connect(Core::EditorManager::instance(),
-			SIGNAL(editorsClosed(QList<Core::IEditor *>)),
-			m_wnd,
+	connect(Core::EditorManager::instance(), SIGNAL(editorsClosed(QList<Core::IEditor *>)),
+			this,
 			SLOT(editorsClosed(QList<Core::IEditor *>)));
-*/
+
+	//tab widget signals
+	//TODO: enable
+	connect(m_tab, SIGNAL(currentChanged(int)), this, SLOT(currentChanged(int)));
+	connect(m_tab, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(customContextMenu(const QPoint &)));
 }
 
 void TabSwitchPlugin::modeChanged(Core::IMode* mode)
@@ -92,7 +121,6 @@ void TabSwitchPlugin::modeChanged(Core::IMode* mode)
 	qDebug() << "Current mode is: " << mode->displayName();
 	if (mode->id() == Core::Constants::MODE_EDIT)
 	{
-		qDebug() << "Edit mode active.";
 		if (!m_initialised)
 		{
 			Core::Internal::EditMode *pEditMode =
@@ -102,22 +130,24 @@ void TabSwitchPlugin::modeChanged(Core::IMode* mode)
 			Q_ASSERT(splitter != NULL);
 
 			// qDebug() << "Widget is: " << splitter->children().length();
-			EditorManagerPlaceHolder *placeHolder =
+			m_placeHolder =
 				dynamic_cast<EditorManagerPlaceHolder *>(splitter->focusProxy());
-			Q_ASSERT(placeHolder != NULL);
+			Q_ASSERT(m_placeHolder != NULL);
 
 			// get layout and modify it
 			m_placeHolderLayout =
-				dynamic_cast<QVBoxLayout *>(placeHolder->layout());
+				dynamic_cast<QVBoxLayout *>(m_placeHolder->layout());
 			Q_ASSERT(m_placeHolderLayout != NULL);
 
-			m_tab = new FancyTabBar(placeHolder);
+			qDebug() << "Creating tab widget.";
+			m_tab = new FancyTabBar(m_placeHolder);
 			m_tab->setObjectName(QLatin1String("TabSwitcherWidget"));
 			m_placeHolderLayout->setSpacing(0);
 			m_placeHolderLayout->insertWidget(0, m_tab);
 
 			m_initialised = true;
 		}
+		m_tab->setParent(m_placeHolder);
 		m_tab->show();
 	}
 	else
@@ -132,16 +162,127 @@ ExtensionSystem::IPlugin::ShutdownFlag TabSwitchPlugin::aboutToShutdown()
 {
 	// Save settings
 	// Disconnect from signals that are not needed during shutdown
-/*
-	disconnect(m_wnd, SLOT(modeChanged(Core::IMode *)));
-	disconnect(m_wnd, SLOT(editorCreated(Core::IEditor *, const QString &)));
-	disconnect(m_wnd, SLOT(currentEditorChanged(Core::IEditor *)));
-	disconnect(m_wnd, SLOT(editorsClosed(QList<Core::IEditor *>)));
-*/
+	disconnect(this, SLOT(modeChanged(Core::IMode *)));
+	disconnect(this, SLOT(editorCreated(Core::IEditor *, const QString &)));
+	disconnect(this, SLOT(currentEditorChanged(Core::IEditor *)));
+	disconnect(this, SLOT(editorsClosed(QList<Core::IEditor *>)));
 	//m_placeHolderLayout->removeWidget(0);
 	// Hide UI (if you add UI that is not in the main window directly)
-	m_tab->setParent(0);
-	m_tab->hide();
+	if (m_initialised)
+	{
+		qDebug() << "Hiding tab widget: ";
+		m_tab->setParent(0);
+		m_tab->hide();
+	}
+	qDebug() << "aboutToShutdown() ended.";
 	return SynchronousShutdown;
 }
 
+void TabSwitchPlugin::editorCreated(Core::IEditor *editor, const QString &fileName)
+{
+	// add tab
+	Q_UNUSED(editor);
+	qDebug() << "editorCreated()";
+	Q_ASSERT(m_tab != 0);
+	int index = m_tab->addTab(getTabCaption(fileName));
+
+	// QVariant::fromValue did not work =(
+	qlonglong ptr = reinterpret_cast<qulonglong>(editor);
+	m_tab->setTabData(index, ptr);
+}
+
+QString TabSwitchPlugin::getTabCaption(const QString& fileName)
+{
+	QFileInfo fi(fileName);
+
+	return QString(fi.fileName());
+}
+
+void TabSwitchPlugin::currentEditorChanged(Core::IEditor *editor)
+{
+	qDebug() << "currentEditorChanged()";
+	if (editor != 0)
+	{
+		int index = findTab(editor);
+
+		if (index >= 0)
+			m_tab->setCurrentIndex(index);
+		else
+		{
+			qWarning() << "No tab found for editor : " <<
+				editor->document()->displayName();
+		}
+	}
+}
+
+void TabSwitchPlugin::editorsClosed(QList<Core::IEditor *> editors)
+{
+	Core::IEditor *editor = 0;
+	int index;
+
+	qDebug() << "editorsClosed()";
+	foreach(editor, editors)
+	{
+		index = findTab(editor);
+
+		if (index >= 0)
+		{
+			m_tab->removeTab(index);
+		}
+		else
+		{
+			qWarning() << "No tab found for editor : " <<
+				editor->document()->displayName();
+		}
+	}
+}
+
+void TabSwitchPlugin::currentChanged(int index)
+{
+	qDebug() << "currentChanged()";
+	if (index >= 0)
+	{
+		Core::IEditor *editor =
+			reinterpret_cast<Core::IEditor *>(m_tab->tabData(index).toLongLong());
+
+		if (editor != 0)
+			Core::EditorManager::instance()->activateEditor(editor);
+	}
+}
+
+int TabSwitchPlugin::findTab(Core::IEditor *editor)
+{
+	for (int i = 0; i < m_tab->count(); i++)
+	{
+		if (m_tab->tabData(i) == reinterpret_cast<qulonglong>(editor))
+			return i;
+	}
+	return -1;
+}
+
+void TabSwitchPlugin::customContextMenu(const QPoint& point)
+{
+	int index = m_tab->tabAt(point);
+
+	if (index >= 0)
+	{
+		m_tab->setCurrentIndex(index);
+	}
+	m_popup->popup(m_tab->mapToGlobal(point));
+}
+
+void TabSwitchPlugin::closeOthers()
+{
+	int index = m_tab->currentIndex();
+
+	QList<Core::IEditor *> editors;
+	if (index >= 0)
+	{
+		for (int i = 0; i < m_tab->count(); i++)
+		{
+			if (i != index)
+				editors.append(reinterpret_cast<Core::IEditor *>(m_tab->tabData(i).toLongLong()));
+		}
+	}
+	Core::EditorManager::instance()->closeEditors(editors, true);
+}
