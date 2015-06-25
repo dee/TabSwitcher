@@ -41,7 +41,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QMouseEvent>
-//#include <QWindowsStyle>
+// #include <QWindowsStyle>
 #include <QPainter>
 #include <QSplitter>
 #include <QStackedLayout>
@@ -50,6 +50,7 @@
 #include <QToolButton>
 #include <QGradient>
 
+using namespace TabSwitch;
 using namespace Core;
 using namespace Internal;
 
@@ -71,7 +72,7 @@ FancyTabBar::FancyTabBar(QWidget *parent)
 	m_hoverControl.setDuration(130);
 	m_hoverControl.setCurveShape(QTimeLine::EaseInCurve);
 	connect(&m_hoverControl, SIGNAL(frameChanged(int)), this, SLOT(updateHover()));
-	setMouseTracking(true); // Needed for hover events
+	setMouseTracking(true);     // Needed for hover events
 	setExpanding(false);
 }
 
@@ -83,15 +84,18 @@ FancyTabBar::~FancyTabBar()
 QSize FancyTabBar::tabSizeHint(int index) const
 {
 	QFont boldFont(font());
+
 	boldFont.setPointSize(10);
 	boldFont.setBold(true);
 	QFontMetrics fm(boldFont);
 	int spacing = 4;
 	int width = spacing + 2;
 	QString currentTabText(tabText(index));
-	if (currentTabText.length() != 0) {
-		width += fm.averageCharWidth()*tabText(index).length() + 10;
-	} else
+	if (currentTabText.length() != 0)
+	{
+		width += fm.averageCharWidth() * tabText(index).length() + 10;
+	}
+	else
 		width += 60;
 	int height = tabIcon(index).actualSize(QSize(64, 64)).height() + spacing + fm.height();
 	if (height < StyleHelper::navigationWidgetHeight())
@@ -107,11 +111,13 @@ void FancyTabBar::paintEvent(QPaintEvent *event)
 
 	// paint background
 	QRect rect = this->rect();
-		p.fillRect(rect, StyleHelper::baseColor());
+	p.fillRect(rect, StyleHelper::baseColor());
 
 	for (int i = 0; i < count(); ++i)
+	{
 		if (i != currentIndex())
 			paintTab(&p, i);
+	}
 
 	// paint active tab last, since it overlaps the neighbors
 	paintTab(&p, currentIndex());
@@ -120,10 +126,13 @@ void FancyTabBar::paintEvent(QPaintEvent *event)
 // Handle hover events for mouse fade ins
 void FancyTabBar::mouseMoveEvent(QMouseEvent *e)
 {
-	if (!m_hoverRect.contains(e->pos())) {
-		for (int i = 0; i < count(); ++i) {
+	if (!m_hoverRect.contains(e->pos()))
+	{
+		for (int i = 0; i < count(); ++i)
+		{
 			QRect area = tabRect(i);
-			if (area.contains(e->pos())) {
+			if (area.contains(e->pos()))
+			{
 				QRect oldHoverRect = m_hoverRect;
 				m_hoverRect = area;
 				update(oldHoverRect);
@@ -159,6 +168,7 @@ void FancyTabBar::leaveEvent(QEvent *e)
 void FancyTabBar::paintTab(QPainter *painter, int tabIndex) const
 {
 	QStyleOptionTabV2 tab;
+
 	initStyleOption(&tab, tabIndex);
 	QRect rect = tab.rect;
 	painter->save();
@@ -167,25 +177,29 @@ void FancyTabBar::paintTab(QPainter *painter, int tabIndex) const
 	bool hover = tab.state & QStyle::State_MouseOver;
 
 #ifdef Q_WS_MAC
-	hover = false; // Dont hover on Mac
+	hover = false;     // Dont hover on Mac
 #endif
 
 	QColor hoverColor;
 
-	if (hover) {
-		hoverColor = QColor(255, 255, 255, m_hoverControl.currentFrame()*2);
+	if (hover)
+	{
+		hoverColor = QColor(255, 255, 255, m_hoverControl.currentFrame() * 2);
 	}
 
 	QColor light = QColor(255, 255, 255, 40);
 	QColor dark = QColor(0, 0, 0, 60);
 
-	if (selected) {
+	if (selected)
+	{
 		painter->fillRect(tab.rect, QColor(0x47, 0x47, 0x47));
 		painter->setPen(QPen(light, 0));
 		painter->drawLine(rect.topLeft(), rect.topRight());
 		painter->setPen(QPen(dark, 0));
 		painter->drawLine(rect.bottomLeft(), rect.bottomRight());
-	} else {
+	}
+	else
+	{
 		painter->fillRect(tab.rect, StyleHelper::baseColor());
 		if (hover)
 			painter->fillRect(tab.rect, hoverColor);
@@ -220,3 +234,4 @@ void FancyTabBar::tabRemoved(int index)
 {
 	Q_UNUSED(index)
 }
+

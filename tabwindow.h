@@ -18,20 +18,19 @@ class QMenu;
 namespace Core {
 	class IMode;
 	class IEditor;
-	namespace Internal {
-		class FancyTabBar;
-	}
 }
 
 namespace TabSwitch
 {
+	class FancyTabBar;
+
 	class TabWindow : public QWidget
 	{
 		Q_OBJECT
 	public:
 		TabWindow(Core::ICore *core, QWidget *parent = 0);
 		~TabWindow();
-		Core::Internal::FancyTabBar * tabBar() { return m_tab; }
+		FancyTabBar *tabBar() { return m_tab; }
 	public slots:
 		void modeChanged(Core::IMode *);
 		void editorCreated(Core::IEditor *editor, const QString &fileName);
@@ -42,7 +41,7 @@ namespace TabSwitch
 		void closeOthers();
 	private:
 		Core::ICore *m_core;
-		Core::Internal::FancyTabBar *m_tab;
+		FancyTabBar *m_tab;
 		QMenu *m_popup;
 		QAction *m_closeOthers;
 		bool m_initialised;

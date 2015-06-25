@@ -3,16 +3,16 @@ DEFINES += TABSWITCH_LIBRARY
 # TabSwitch files
 
 SOURCES += tabswitchplugin.cpp \
-    fancytabwidget.cpp \
     stylehelper.cpp \
-    tabwindow.cpp
+    tabwindow.cpp \
+    fancytabwidget.cpp
 
 HEADERS += tabswitchplugin.h \
         tabswitch_global.h \
         tabswitchconstants.h \
-    fancytabwidget.h \
     stylehelper.h \
-    tabwindow.h
+    tabwindow.h \
+    fancytabwidget.h
 
 # Qt Creator linking
 

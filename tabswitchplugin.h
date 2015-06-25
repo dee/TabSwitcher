@@ -7,10 +7,14 @@
 
 class QStringList;
 class QString;
+class QVBoxLayout;
 
-namespace TabSwitch {
-	namespace Internal {
+namespace TabSwitch
+{
+	class FancyTabBar;
 
+	namespace Internal
+	{
 		class TabSwitchPlugin : public ExtensionSystem::IPlugin
 		{
 			Q_OBJECT
@@ -23,9 +27,13 @@ namespace TabSwitch {
 			bool initialize(const QStringList &arguments, QString *errorString);
 			void extensionsInitialized();
 			ShutdownFlag aboutToShutdown();
+		public slots:
+			void modeChanged(Core::IMode *mode);
 		private:
-			TabWindow *m_wnd;
+			FancyTabBar *m_tab;
+			QVBoxLayout* m_placeHolderLayout;
 			Core::ICore *m_core;
+			bool m_initialised;
 		};
 
 	} // namespace Internal

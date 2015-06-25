@@ -26,13 +26,13 @@
 #include "fancytabwidget.h"
 
 using namespace TabSwitch;
-using Core::Internal::FancyTabBar;
 using Core::EditorManagerPlaceHolder;
 using Core::ActionManager;
 
 TabWindow::TabWindow(Core::ICore *core, QWidget *parent) : QWidget(parent),
 	m_core(core), m_initialised(false)
 {
+/*
 	QVBoxLayout *vBox = new QVBoxLayout(this);
 
 	vBox->setContentsMargins(0, 0, 0, 0);
@@ -47,7 +47,7 @@ TabWindow::TabWindow(Core::ICore *core, QWidget *parent) : QWidget(parent),
 
 	auto *am = ActionManager::instance();
 	m_popup = new QMenu(this);
-/*
+
 	// get first from manager, it is predefined
 	Core::Command *cmd = am->command(Core::Constants::CLOSE);
 
@@ -67,51 +67,24 @@ TabWindow::TabWindow(Core::ICore *core, QWidget *parent) : QWidget(parent),
 	cmd = am->command(Core::Constants::CLOSEALL);
 
 	if (cmd != 0)
-		m_popup->addAction(cmd->action());*/
+		m_popup->addAction(cmd->action());
+*/
 }
+
+//TabWindow::initialise(QWidget* parent)
+//{
+//	m_tab = new FancyTabBar(parent);
+//}
 
 TabWindow::~TabWindow()
 {
-	ActionManager::instance()->unregisterAction(m_closeOthers, Core::Id("TabBar.CloseOtherEditors"));
-	qDebug() << "Destroying TabWindow instance.";
+//	ActionManager::instance()->unregisterAction(m_closeOthers, Core::Id("TabBar.CloseOtherEditors"));
+//	qDebug() << "Destroying TabWindow instance.";
 }
 
 void TabWindow::modeChanged(Core::IMode *mode)
 {
-	Q_UNUSED(mode)
-	qDebug() << "Current mode is: " << mode->displayName();
 
-	if (mode->id() == Core::Constants::MODE_EDIT)
-	{
-		qDebug() << "Edit mode active.";
-		if (!m_initialised)
-		{
-			Core::Internal::EditMode *pEditMode =
-				dynamic_cast<Core::Internal::EditMode *>(mode);
-			Core::MiniSplitter *splitter =
-				dynamic_cast<Core::MiniSplitter *>(pEditMode->widget());
-			Q_ASSERT(splitter != NULL);
-
-			// qDebug() << "Widget is: " << splitter->children().length();
-			EditorManagerPlaceHolder *placeHolder =
-				dynamic_cast<EditorManagerPlaceHolder *>(splitter->focusProxy());
-			Q_ASSERT(placeHolder != NULL);
-
-			// get layout and modify it
-			QVBoxLayout *placeHolderLayout =
-				dynamic_cast<QVBoxLayout *>(placeHolder->layout());
-			Q_ASSERT(placeHolderLayout != NULL);
-			placeHolderLayout->setSpacing(0);
-			placeHolderLayout->insertWidget(0, this);
-			m_initialised = true;
-		}
-		show();
-	}
-	else
-	{
-		hide();
-		qDebug() << "Edit mode inactive.\r\n";
-	}
 }
 
 QString TabWindow::getTabCaption(const QString& fileName)

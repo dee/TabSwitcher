@@ -45,38 +45,35 @@ class QStackedLayout;
 class QStatusBar;
 QT_END_NAMESPACE
 
-namespace Core {
-namespace Internal {
-
-class FancyTabBar : public QTabBar
+namespace TabSwitch
 {
-	Q_OBJECT
+	class FancyTabBar : public QTabBar
+	{
+		Q_OBJECT
 
-public:
-	FancyTabBar(QWidget *parent = 0);
-	~FancyTabBar();
+	public:
+		FancyTabBar(QWidget *parent = 0);
+		~FancyTabBar();
 
-	QSize tabSizeHint(int index) const;
-	void paintEvent(QPaintEvent *event);
-	void paintTab(QPainter *painter, int tabIndex) const;
-	void mouseMoveEvent(QMouseEvent *);
-	void enterEvent(QEvent *);
-	void leaveEvent(QEvent *);
-	void tabInserted(int index);
-	void tabRemoved(int index);
+		QSize tabSizeHint(int index) const;
+		void paintEvent(QPaintEvent *event);
+		void paintTab(QPainter *painter, int tabIndex) const;
+		void mouseMoveEvent(QMouseEvent *);
+		void enterEvent(QEvent *);
+		void leaveEvent(QEvent *);
+		void tabInserted(int index);
+		void tabRemoved(int index);
 
-public slots:
-	void updateHover();
+	public slots:
+		void updateHover();
 
-private:
-	static const int m_rounding;
-	static const int m_textPadding;
-	QTimeLine m_hoverControl;
-	QRect m_hoverRect;
-};
-
-} // namespace Internal
-} // namespace Core
+	private:
+		static const int m_rounding;
+		static const int m_textPadding;
+		QTimeLine m_hoverControl;
+		QRect m_hoverRect;
+	};
+}
 
 #endif // FANCYTABWIDGET_H
 
