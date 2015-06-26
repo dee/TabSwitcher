@@ -3,15 +3,19 @@
 
 #include "tabswitch_global.h"
 #include <extensionsystem/iplugin.h>
-#include "tabwindow.h"
 
 class QStringList;
 class QString;
 class QVBoxLayout;
+class QMenu;
+class QAction;
 
 namespace Core
 {
 	class EditorManagerPlaceHolder;
+	class IMode;
+	class IEditor;
+	class ICore;
 }
 
 namespace TabSwitch
@@ -51,6 +55,7 @@ namespace TabSwitch
 
 			QString getTabCaption(const QString&);
 			int findTab(Core::IEditor *editor);
+			void buildMenu();
 		};
 
 	} // namespace Internal

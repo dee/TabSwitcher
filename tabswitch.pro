@@ -4,14 +4,12 @@ DEFINES += TABSWITCH_LIBRARY
 
 SOURCES += tabswitchplugin.cpp \
     stylehelper.cpp \
-    tabwindow.cpp \
     fancytabwidget.cpp
 
 HEADERS += tabswitchplugin.h \
         tabswitch_global.h \
         tabswitchconstants.h \
     stylehelper.h \
-    tabwindow.h \
     fancytabwidget.h
 
 # Qt Creator linking
