@@ -1,5 +1,7 @@
 DEFINES += TABSWITCH_LIBRARY
 
+Release:DEFINES += QT_NO_DEBUG_OUTPUT
+
 # TabSwitch files
 
 SOURCES += tabswitchplugin.cpp \
@@ -49,5 +51,5 @@ include($$QTCREATOR_SOURCES/src/qtcreatorplugin.pri)
 
 DISTFILES += \
 	uncrustify.cfg \
-    README.md
+	README.md
 
