@@ -181,9 +181,9 @@ void TabSwitchPlugin::editorCreated(Core::IEditor *editor, const QString &fileNa
     Q_ASSERT(m_tab != 0);
     int index = m_tab->addTab(getTabCaption(fileName));
 
-    // QVariant::fromValue did not work =(
-    qlonglong ptr = reinterpret_cast<qulonglong>(editor);
-    m_tab->setTabData(index, ptr);
+    auto key = fileName;
+    qDebug() << "Setting tab data to " << key;
+    m_tab->setTabData(index, key);
 }
 
 QString TabSwitchPlugin::getTabCaption(const QString& fileName)
@@ -194,13 +194,14 @@ QString TabSwitchPlugin::getTabCaption(const QString& fileName)
 
 void TabSwitchPlugin::currentEditorChanged(Core::IEditor *editor)
 {
-    qDebug() << "currentEditorChanged()";
     if (editor != 0)
     {
         int index = findTab(editor);
 
         if (index >= 0)
+        {
             m_tab->setCurrentIndex(index);
+        }
         else
         {
             qWarning() << "No tab found for editor : " <<
@@ -236,20 +237,26 @@ void TabSwitchPlugin::currentChanged(int index)
     qDebug() << "currentChanged()";
     if (index >= 0)
     {
-        Core::IEditor *editor =
-            reinterpret_cast<Core::IEditor *>(m_tab->tabData(index).toLongLong());
-
-        if (editor != 0)
+        QString fn = m_tab->tabData(index).toString();
+        const QList<IEditor *> editors = DocumentModel::editorsForFilePath(fn);
+        if (!editors.isEmpty()) {
+            IEditor *editor = editors.first();
             Core::EditorManager::instance()->activateEditor(editor);
+        }
     }
 }
 
 int TabSwitchPlugin::findTab(Core::IEditor *editor)
 {
+    qDebug() << "Find tab: " << editor->document()->filePath().toString();
     for (int i = 0; i < m_tab->count(); i++)
     {
-        if (m_tab->tabData(i) == reinterpret_cast<qulonglong>(editor))
+        auto data = m_tab->tabData(i).toString();
+        if (data == editor->document()->filePath().toString())
+        {
+            qDebug() << "Found, index is " << i;
             return i;
+        }
     }
     return -1;
 }
