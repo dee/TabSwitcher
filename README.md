@@ -2,8 +2,8 @@
 
 TabSwitch (former TabBar) is a plugin for [QtCreator](https://www.qt.io/ide/), which implements a tabbed editor interface.
 
-![main view](https://github.com/dee/TabSwitcher/doc/tabs.png "Example")
-![popup menu](https://github.com/dee/TabSwitcher/doc/menu.png "Basic popup")
+![main view](https://raw.githubusercontent.com/dee/TabSwitcher/master/doc/tabs.png "Example")
+![popup menu](https://raw.githubusercontent.com/dee/TabSwitcher/master/doc/menu.png "Basic popup")
 
 Old habits die hardly and I just wanted to have Visual-Studio-like interface in Qt Creator.
 
@@ -18,7 +18,7 @@ but a newer version is also available)
 
 To configure, simply edit a tabswitch.pro file, adjusting following paths to your system:
 
-![config](https://github.com/dee/TabSwitcher/doc/config.png "where exactly")
+![config](https://raw.githubusercontent.com/dee/TabSwitcher/master/doc/config.png "where exactly")
 
 Contact me if you need a binary build.
 
