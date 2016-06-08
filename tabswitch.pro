@@ -3,24 +3,23 @@ DEFINES += TABSWITCH_LIBRARY
 # TabSwitch files
 
 SOURCES += tabswitchplugin.cpp \
-    stylehelper.cpp \
-    fancytabwidget.cpp
+	stylehelper.cpp \
+	fancytabwidget.cpp
 
 HEADERS += tabswitchplugin.h \
-        tabswitch_global.h \
-        tabswitchconstants.h \
-    stylehelper.h \
-    fancytabwidget.h
+		tabswitch_global.h \
+		tabswitchconstants.h \
+	stylehelper.h \
+	fancytabwidget.h
 
 # Qt Creator linking
 
 ## set the QTC_SOURCE environment variable to override the setting here
 QTCREATOR_SOURCES = $$(QTC_SOURCE)
-isEmpty(QTCREATOR_SOURCES):QTCREATOR_SOURCES=C:/Projects/_Qt/qt-creator-opensource-src-3.4.1
-
+isEmpty(QTCREATOR_SOURCES):QTCREATOR_SOURCES=D:/Projects/_Qt/qt-creator-opensource-src-3.5.1
 ## set the QTC_BUILD environment variable to override the setting here
 IDE_BUILD_TREE = $$(QTC_BUILD)
-isEmpty(IDE_BUILD_TREE):IDE_BUILD_TREE=C:\Projects\_Qt\build-qtcreator-Desktop_Qt_5_4_2_MSVC2013_64bit-Debug
+isEmpty(IDE_BUILD_TREE):IDE_BUILD_TREE=D:\Projects\_Qt\build-qtcreator-Desktop_Qt_5_5_1_MSVC2013_64bit-Debug
 
 ## uncomment to build plugin into user config directory
 ## <localappdata>/plugins/<ideversion>
@@ -36,18 +35,19 @@ isEmpty(IDE_BUILD_TREE):IDE_BUILD_TREE=C:\Projects\_Qt\build-qtcreator-Desktop_Q
 
 QTC_PLUGIN_NAME = TabSwitch
 QTC_LIB_DEPENDS += \
-    # nothing here at this time
+	# nothing here at this time
 
 QTC_PLUGIN_DEPENDS += \
-    coreplugin
+	coreplugin
 
 QTC_PLUGIN_RECOMMENDS += \
-    # optional plugin dependencies. nothing here at this time
+	# optional plugin dependencies. nothing here at this time
 
 ###### End _dependencies.pri contents ######
 
 include($$QTCREATOR_SOURCES/src/qtcreatorplugin.pri)
 
 DISTFILES += \
-    uncrustify.cfg
+	uncrustify.cfg \
+    README.md
 
